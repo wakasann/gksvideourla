@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ksvd</string>
+    <string name="submit_button">确认</string>
+    <string name="clear_button">清空</string>
+    <string name="empty_url">地址不能为空</string>
+    <string name="help_text">目前只支持: http://www.gifshow.com/s 开头的链接；使用姿势: 打开快手 -> 找到你想下载的视频->点击分享->复制链接->粘贴到下方->点击确认之后，解析之后，下面会出现MP4的链接,点击它会跳到浏览器中</string>
+</resources>
