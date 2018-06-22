@@ -208,19 +208,23 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void splitReponseContent(String responseResult){
-        String firstFilterString = "window.VUE_MODEL_INIT_STATE.shortVideoComment={\"work\":";
-        String secondFilterString = "\"comment\"";
+        String firstFilterString = "window.VUE_MODEL_INIT_STATE.profileGallery=";
+        String secondFilterString = "\"replyToUserName\":\"\"}};";
         int firstIndex = responseResult.indexOf(firstFilterString);
         if(firstIndex > 0){
-            //Log.i("INDEX",String.valueOf(firstIndex));
+           // Log.i("INDEX",String.valueOf(firstIndex));
             responseResult = responseResult.substring(firstIndex+firstFilterString.length());
             int commentIndex = responseResult.indexOf(secondFilterString);
+            //Log.i("INDEX",String.valueOf(commentIndex));
             if(commentIndex > 0){
-                responseResult = responseResult.substring(9,commentIndex - 3);
-                Log.d("HTTP",responseResult);
+                responseResult = responseResult.substring(0,commentIndex + secondFilterString.length() - 1);
+                //Log.d("HTTP",responseResult);
                 try{
                     JSONObject jsonObject =  new JSONObject(responseResult);
-                    String playUrl = jsonObject.optString("playUrl");
+                    JSONObject work = (JSONObject) jsonObject.get("work");
+                    JSONObject currentWork = (JSONObject) work.get("currentWork");
+                    String playUrl = currentWork.optString("playUrl");
+                    //Log.d("PlayUrl",playUrl);
                     videoUrl = playUrl;
                     Message msg = new Message();
                     msg.what = 1;
