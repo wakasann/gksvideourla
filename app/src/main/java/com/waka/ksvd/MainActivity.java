@@ -25,13 +25,19 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends AppCompatActivity {
     private EditText shareUri;
     private Button submitButton;
     private Button clearButton;
+    private Button rulesButton;
     private TextView showVideoUrlView;
 
     private Toast toast;
@@ -39,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private String requestUrl = "";
     private String videoUrl = "";
     private Handler handler=null;
+    private String firstFilterString = "window.VUE_MODEL_INIT_STATE['profileGallery']=";
+    private String secondFilterString = "账号封禁\"};";
 
 
     /**
@@ -68,9 +76,23 @@ public class MainActivity extends AppCompatActivity {
                 switch (msg.what){
                     case 1:
                         shareUri.getText().clear();
+                        showPromptToast("点击链接查看视频");
                         //请求成功
                         showVideoUrlView.setText(videoUrl);
+
+                        showVideoUrlView.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v){
+                                Uri uri = Uri.parse(videoUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+                            }
+                        });
+
                         break;
+                     default:
+                         showPromptToast("なに");
+                         break;
                 }
             }
         };
@@ -84,9 +106,7 @@ public class MainActivity extends AppCompatActivity {
                shareUri.getText().clear();
                showVideoUrlView = (TextView)findViewById(R.id.video_url);
                showVideoUrlView.setText("");
-//                Uri uri = Uri.parse("https://www.baidu.com");
-//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//                startActivity(intent);
+                showPromptToast("已清空");
             }
         });
 
@@ -97,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
                 getVideoUrl();
             }
         });
-
 
     }
 
@@ -144,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Charset", "UTF-8");
             connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-            connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36");
+            connection.setRequestProperty("User-Agent","Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1");
             connection.setInstanceFollowRedirects(false);
             connection.setConnectTimeout(5000);
             connection.connect();
@@ -155,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return connection;
     }
+
+
 
     Runnable getUrlRuns = new Runnable() {
         @Override
@@ -168,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 // 设置编码格式
                 connection.setRequestProperty("Charset", "UTF-8");
                 connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-                connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36");
+                connection.setRequestProperty("User-Agent","Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1");
                 connection.setConnectTimeout(5000);
                 connection.setInstanceFollowRedirects(false);
                 connection.connect();
@@ -190,10 +211,9 @@ public class MainActivity extends AppCompatActivity {
                     inputStream.close();
                     connection.disconnect();
                     result = chaine.toString();
-                    splitReponseContent(result);
-
-
-                    //Log.d("HTTP",result);
+                    reponseContentUseRegex(result);
+                    //splitReponseContent(result);
+                    Log.d("HTTP",result);
                 }
 
             }
@@ -207,9 +227,45 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * @link https://www.cnblogs.com/gmq-sh/p/5820937.html,
+     * @param responseResult
+     */
+    private void reponseContentUseRegex(String responseResult){
+        try{
+            List<String> videos = new ArrayList<>();
+            String video = "";
+
+            String videoRegex = "<video.*src\\s*=\\s*(.*?)[^>]*?>";
+            Pattern videoPattern = Pattern.compile(videoRegex,Pattern.CASE_INSENSITIVE);
+            Matcher videoMatcher = videoPattern.matcher(responseResult);
+            int videoMatcherCount = videoMatcher.groupCount();
+            Log.d("Regex",videoMatcherCount+" 匹配");
+            while (videoMatcher.find()) {
+                video = videoMatcher.group();
+                Matcher m = Pattern.compile("src\\s*=\\s*\"?(.*?)(\"|>|\\s+)").matcher(video);
+                while (m.find()) {
+                    videos.add(m.group(1));
+                }
+            }
+            if(videos.size() >= 1){
+                videoUrl = videos.get(0);
+            }
+            Message msg = new Message();
+            msg.what = 1;
+            handler.sendMessage(msg);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @deprecated not use substring method
+     * @param responseResult
+     */
     private void splitReponseContent(String responseResult){
-        String firstFilterString = "window.VUE_MODEL_INIT_STATE.profileGallery=";
-        String secondFilterString = "\"replyToUserName\":\"\"}};";
+//        String firstFilterString = "window.VUE_MODEL_INIT_STATE['profileGallery']=";
+//        String secondFilterString = "账号封禁\"};";
         int firstIndex = responseResult.indexOf(firstFilterString);
         if(firstIndex > 0){
            // Log.i("INDEX",String.valueOf(firstIndex));
@@ -230,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                     msg.what = 1;
                     handler.sendMessage(msg);
                     //showVideoUrlView.setText(playUrl);
-                    Log.d("HTTP",playUrl);
+                    //Log.d("HTTP",playUrl);
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
