@@ -32,3 +32,7 @@ JSONObject work = (JSONObject) jsonObject.get("work");
 JSONObject currentWork = (JSONObject) work.get("currentWork");
 String playUrl = currentWork.optString("playUrl");
 ```
+
+#### 2019-05-09
+
+尝试使用 jadx 反编译 快手app,发现请求中的签名字段已改为 `sig2`
