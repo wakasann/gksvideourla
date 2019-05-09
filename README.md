@@ -35,4 +35,4 @@ String playUrl = currentWork.optString("playUrl");
 
 #### 2019-05-09
 
-尝试使用 jadx 反编译 快手app,发现请求中的签名字段已改为 `sig2`
+尝试使用 jadx 反编译 快手app(6.4.0.9003),发现请求中的签名字段已改为 `sig2`
