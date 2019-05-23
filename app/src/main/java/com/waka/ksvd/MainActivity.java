@@ -15,6 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.yxcorp.gifshow.entity.QPhoto;
+import com.yxcorp.gifshow.model.PhotoInfoList;
+import com.yxcorp.gifshow.model.PhotoInfoQuery;
+import com.yxcorp.gifshow.retrofit.service.KwaiApiService;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,11 +37,17 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import retrofit2.Retrofit;
+
 
 public class MainActivity extends AppCompatActivity {
     private EditText shareUri;
     private Button submitButton;
     private Button clearButton;
+
+    private Button requestSingleButton; //测试请求单个的按钮
+    private static final Pattern sharePattern = Pattern.compile("[\\s\\n]+");
+
     private Button rulesButton;
     private TextView showVideoUrlView;
 
@@ -118,8 +129,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        requestSingleButton = (Button) findViewById(R.id.request_single);
+        requestSingleButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                requestPhotoInfo();
+            }
+        });
+
     }
 
+
+    public void requestPhotoInfo(){
+        showPromptToast("点击我啦");
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.ksapisrv.com/rest/")
+                .build();
+
+
+
+        KwaiApiService kwaiApiService = retrofit.create(KwaiApiService.class);
+
+        QPhoto qPhoto = new QPhoto();
+        String PhotoId = qPhoto.getPhotoId();
+        String serverTag = qPhoto.getServerExpTag();
+        PhotoInfoList photo = new PhotoInfoList(new PhotoInfoQuery(PhotoId,serverTag));
+
+        kwaiApiService.getPhotoInfos(photo);
+
+    }
 
 
 
