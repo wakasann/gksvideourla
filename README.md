@@ -6,6 +6,11 @@ App页面截图:
 
 ![](./screenshot/Screenshot_2018-06-10-22-05-58.png)
 
+### Todo List
+
+- [ ] 添加一个配置读取配置的输入框，默认是使用本地的配置JSON文件，也可以使用网络上的配置
+- [ ] 网络的配置文件，需要验证格式是正确
+
 #### 20180622
 
 1. 更新了截取规则，了解到 java解析多级JSON规则，需要一级一级的解析下去，参考[json-simple 解析多级json字符串](https://blog.csdn.net/qq_21682469/article/details/78953896)
