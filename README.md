@@ -60,6 +60,14 @@ Android Studio ide的版本 更新到 3.1.4
 api 'com.google.guava:guava:27.1-android'
 ```
 
+---
+
+1. `http://www.gifshow.com/fw/photo/5229242126404827955?userId=3xwccfweqip6x9i&photoId=3x8n2rkgyp39q7k&cc=share_copylink&timestamp=1559144677719&et=1_i%2F1634881657273335808_h86`
+
+这个链接需要登录的web用户才能转发到
+
+
+
 
 # Reference
 

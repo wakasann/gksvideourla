@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.waka.test.HttpSeedInterface;
 import com.yxcorp.gifshow.entity.QPhoto;
 import com.yxcorp.gifshow.model.PhotoInfoList;
 import com.yxcorp.gifshow.model.PhotoInfoQuery;
@@ -37,6 +38,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 
@@ -146,16 +151,37 @@ public class MainActivity extends AppCompatActivity {
                 .baseUrl("http://api.ksapisrv.com/rest/")
                 .build();
 
+        HttpSeedInterface httpSeedInterface = retrofit.create(HttpSeedInterface.class);
 
+        String shareText = "文古古古发了一个快手作品，一起来看！ http://www.gifshow.com/s/TPu0C3Xw 复制此链接，打开【快手】直接观看！";
 
-        KwaiApiService kwaiApiService = retrofit.create(KwaiApiService.class);
+        Call<ResponseBody> call =  httpSeedInterface.tokenShareInfo(shareText);
 
-        QPhoto qPhoto = new QPhoto();
-        String PhotoId = qPhoto.getPhotoId();
-        String serverTag = qPhoto.getServerExpTag();
-        PhotoInfoList photo = new PhotoInfoList(new PhotoInfoQuery(PhotoId,serverTag));
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try{
+                    String s = response.body().string();
+                    Log.e("retrofit",s);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
 
-        kwaiApiService.getPhotoInfos(photo);
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("retrofit",t.toString());
+            }
+        });
+
+//        KwaiApiService kwaiApiService = retrofit.create(KwaiApiService.class);
+//
+//        QPhoto qPhoto = new QPhoto();
+//        String PhotoId = qPhoto.getPhotoId();
+//        String serverTag = qPhoto.getServerExpTag();
+//        PhotoInfoList photo = new PhotoInfoList(new PhotoInfoQuery(PhotoId,serverTag));
+//
+//        kwaiApiService.getPhotoInfos(photo);
 
     }
 
@@ -164,9 +190,21 @@ public class MainActivity extends AppCompatActivity {
     public void getVideoUrl(){
         requestUrl = shareUri.getText().toString();
         String urlFormat = "http://www.gifshow.com/s";
+        String urlForm2 = "http://www.gifshow.com/fw/photo";
         if(requestUrl.isEmpty()){
             showPromptToast(this.getString(R.string.empty_url));
-        }else if(requestUrl.indexOf(urlFormat) == 0){
+        }else if(requestUrl.contains(urlFormat)){
+            Pattern httpLinkPattern = Pattern.compile("https{0,1}[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
+            Matcher matcher = httpLinkPattern.matcher(requestUrl);
+            if(matcher.find()){
+                requestUrl = matcher.group(0);
+                new Thread(getUrlRuns).start();
+                showPromptToast("转换中");
+            }else{
+                showPromptToast("抱歉只支持快手分享的链接T_T");
+            }
+
+        }else if(requestUrl.indexOf(urlForm2) == 0){
             new Thread(getUrlRuns).start();
             showPromptToast("转换中");
         }else{
@@ -220,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             StringBuffer chaine = new StringBuffer("");
             try{
+                Log.i("link",requestUrl);
                 URL url = new URL(requestUrl);
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 // 设置请求方式
@@ -283,6 +322,8 @@ public class MainActivity extends AppCompatActivity {
                 video = videoMatcher.group();
                 Matcher m = Pattern.compile("src\\s*=\\s*\"?(.*?)(\"|>|\\s+)").matcher(video);
                 while (m.find()) {
+                    Log.i("link",m.group(0));
+                    Log.i("link2",m.group(1));
                     videos.add(m.group(1));
                 }
             }
