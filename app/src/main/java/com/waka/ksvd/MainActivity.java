@@ -2,7 +2,6 @@ package com.waka.ksvd;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -15,11 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.waka.mvp.present.VideoHomePresenter;
 import com.waka.test.HttpSeedInterface;
-import com.yxcorp.gifshow.entity.QPhoto;
-import com.yxcorp.gifshow.model.PhotoInfoList;
-import com.yxcorp.gifshow.model.PhotoInfoQuery;
-import com.yxcorp.gifshow.retrofit.service.KwaiApiService;
+import com.waka.test.TokenRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,9 +29,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     private String firstFilterString = "window.VUE_MODEL_INIT_STATE['profileGallery']=";
     private String secondFilterString = "账号封禁\"};";
 
+    //mvp test
+
+    private VideoHomePresenter videoHomePresenter = new VideoHomePresenter();
 
     /**
      * @link https://blog.csdn.net/starkhuang/article/details/51038716
@@ -134,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //try mvp request
+
         requestSingleButton = (Button) findViewById(R.id.request_single);
         requestSingleButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -142,37 +144,54 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
+
+
+
     }
 
 
     public void requestPhotoInfo(){
         showPromptToast("点击我啦");
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.ksapisrv.com/rest/")
-                .build();
+        videoHomePresenter.shareMessage();
+        //try mvp
 
-        HttpSeedInterface httpSeedInterface = retrofit.create(HttpSeedInterface.class);
 
-        String shareText = "文古古古发了一个快手作品，一起来看！ http://www.gifshow.com/s/TPu0C3Xw 复制此链接，打开【快手】直接观看！";
 
-        Call<ResponseBody> call =  httpSeedInterface.tokenShareInfo(shareText);
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("http://api.ksapisrv.com/rest/")
+//                .build();
+//
+//        HttpSeedInterface httpSeedInterface = retrofit.create(HttpSeedInterface.class);
+//
+//        String shareText = "文古古古发了一个快手作品，一起来看！ http://www.gifshow.com/s/TPu0C3Xw 复制此链接，打开【快手】直接观看！";
+//        Map<String,String> queryMap = new HashMap<String,String>();
+//        queryMap.put("shareText",shareText);
 
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try{
-                    String s = response.body().string();
-                    Log.e("retrofit",s);
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
+//        TokenRequest tokenRequest = new TokenRequest();
+//        tokenRequest.TokenRequestBean tokenRequestBean = tokenRequest.new TokenRequestBean();
+//        tokenRequestBean.setSig("gg");
+//        tokenRequest.setTokenRequestBean(tokenRequestBean);
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("retrofit",t.toString());
-            }
-        });
+//        Call<ResponseBody> call =  httpSeedInterface.tokenShareInfo(queryMap,tokenRequest);
+//
+//        call.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                try{
+//                    String s = response.body().string();
+//                    Log.e("retrofit",s);
+//                }catch (IOException e){
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Log.e("retrofit",t.toString());
+//            }
+//        });
 
 //        KwaiApiService kwaiApiService = retrofit.create(KwaiApiService.class);
 //
@@ -374,4 +393,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        videoHomePresenter.detattch();
+    }
 }
