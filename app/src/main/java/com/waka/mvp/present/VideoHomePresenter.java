@@ -1,5 +1,8 @@
 package com.waka.mvp.present;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.waka.mvp.disposable.SubscriptionManager;
 import com.waka.mvp.error.ExceptionHandle;
 import com.waka.mvp.model.Observer;
@@ -17,7 +20,12 @@ public class VideoHomePresenter extends BasePresenter<SimpleView> {
         videoHomeTab.messageInfo(new Observer<VideoHomeTab>() {
             @Override
             public void OnSuccess(VideoHomeTab videoHomeTab) {
-                view.onSuccess(videoHomeTab);
+                if(videoHomeTab == null){
+                    Log.e("Api","请求失败");
+                }else{
+                    view.onSuccess(videoHomeTab);
+                }
+
             }
 
             @Override
