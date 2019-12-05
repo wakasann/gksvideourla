@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private String secondFilterString = "账号封禁\"};";
     private String downloadUrl = ""; //避免一个视频多次下载
 
+    //原生的videoview和控制
     private VideoView mVideoView;
     private MediaController mMediaController;
 
@@ -156,8 +157,7 @@ public class MainActivity extends AppCompatActivity {
                showVideoUrlView.setText("");
                downloadButton.setEnabled(false);
                shareUri.clearFocus();
-                String path4 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
-                showPromptToast("已清空"+path4);
+                showPromptToast("已清空");
             }
         });
 
@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                shareUri.clearFocus();
                 getVideoUrl();
             }
         });
@@ -229,16 +230,16 @@ public class MainActivity extends AppCompatActivity {
         // 如果相等的话表示当前的sdcard挂载在手机上并且是可用的
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             String path3 = getExternalFilesDir(null).getPath();
-            String path4 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
-            Log.i("TAG","path4"+path4);
+//            String path4 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+//            Log.i("TAG","path4"+path4);
 //            showPromptToast("download"+path4);
             // 选择自己的文件夹
 //            String path2 = Environment.getExternalStorageDirectory().getPath();
             // Constants.video_url 是一个常量，代表存放视频的文件夹
-            File mediaStorageDir = new File(path4 + File.separator + save_path);
+            File mediaStorageDir = new File(path3);
             if (!mediaStorageDir.exists()) {
                 if (!mediaStorageDir.mkdirs()) {
-                    showPromptToast("文件夹创建失败"+path4);
+                    showPromptToast("文件夹创建失败"+path3);
 //                    Log.e("TAG", "文件夹创建失败");
                     return null;
                 }
