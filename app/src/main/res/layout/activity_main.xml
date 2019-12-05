@@ -71,8 +71,8 @@
            <Button
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
-               android:id="@+id/request_single"
-               android:text="@string/request_single_share"
+               android:id="@+id/download_btn"
+               android:text="@string/download_button"
                android:padding="0dp"/>
        </LinearLayout>
 
@@ -80,15 +80,15 @@
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="9dp"
-                android:layout_marginBottom="9dp"
-                android:id="@+id/video_url"
-                android:autoLink="web"
-                android:text=""
-                />
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="9dp"
+               android:layout_marginBottom="9dp"
+               android:id="@+id/video_url"
+               android:autoLink="web"
+               android:text=""
+               />
        </LinearLayout>
 
        <TextView
@@ -99,6 +99,33 @@
            android:layout_marginTop="5dp"
            android:text="@string/help_text2"
            />
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal">
+
+           <VideoView
+               android:id="@+id/video_preview"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:layout_gravity="center" />
+       </LinearLayout>
+
+<!--       <LinearLayout-->
+<!--           android:layout_width="match_parent"-->
+<!--           android:layout_height="wrap_content"-->
+<!--           android:orientation="horizontal">-->
+
+<!--           <Button-->
+<!--               android:layout_width="match_parent"-->
+<!--               android:layout_height="wrap_content"-->
+<!--               android:id="@+id/request_single"-->
+<!--               android:text="@string/request_single_share"-->
+<!--               android:padding="0dp"/>-->
+<!--       </LinearLayout>-->
+
+
 
    </LinearLayout>
 
