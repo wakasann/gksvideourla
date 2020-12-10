@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,18 +117,18 @@ public class MainActivity extends AppCompatActivity {
                     case 1:
                         shareUri.getText().clear();
                         shareUri.clearFocus();
-//                        showPromptToast("点击链接查看视频");
+                        showPromptToast("点击链接查看视频");
                         //请求成功
                         showVideoUrlView.setText(videoUrl);
 
-                        showVideoUrlView.setOnClickListener(new View.OnClickListener(){
-                            @Override
-                            public void onClick(View v){
-                                Uri uri = Uri.parse(videoUrl);
-                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                startActivity(intent);
-                            }
-                        });
+//                        showVideoUrlView.setOnClickListener(new View.OnClickListener(){
+//                            @Override
+//                            public void onClick(View v){
+//                                Uri uri = Uri.parse(videoUrl);
+//                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                                startActivity(intent);
+//                            }
+//                        });
                         //
                         downloadButton.setEnabled(true);
                         //将路径转换成uri
@@ -340,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getVideoUrl(){
         requestUrl = shareUri.getText().toString();
-        String urlFormat = "/s/";
+        String urlFormat = "http";
         String urlForm2 = "http://www.gifshow.com/fw/photo";
         if(requestUrl.isEmpty()){
             showPromptToast(this.getString(R.string.empty_url));
