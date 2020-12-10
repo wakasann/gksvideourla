@@ -12,6 +12,15 @@ App页面截图:
 - [ ] 添加一个配置读取配置的输入框，默认是使用本地的配置JSON文件，也可以使用网络上的配置
 - [ ] 网络的配置文件，需要验证格式是正确
 
+Give up :cry:
+
+##20201210
+[[Android基础] VideoView](https://www.jianshu.com/p/2d3b221a2ee7)
+[Android VideoView比例缩放](http://www.voidcn.com/article/p-vuxjkawj-btx.html)
+[Android开发 VideoView视频播放详解](https://www.cnblogs.com/guanxinjing/p/11177739.html) 对布局的说明比较详细，虽然没有解决问题
+
+固定解析的Url播放视频的尺寸，测试的设备: 荣耀Play
+
 #### 20180622
 
 1. 更新了截取规则，了解到 java解析多级JSON规则，需要一级一级的解析下去，参考[json-simple 解析多级json字符串](https://blog.csdn.net/qq_21682469/article/details/78953896)
